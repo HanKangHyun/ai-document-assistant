@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>문서 도우미</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><a class="brand" href="/">▤ 문서 도우미</a><span class="badge">내 문서에서 찾기</span></header>
+<main>
+  <section class="intro"><p class="eyebrow">DOCUMENT WORKSPACE</p><h1>문서는 모아두고,<br>필요한 내용은 바로 찾으세요.</h1><p>PDF를 업로드하고 키워드로 검색하면, 원문과 해당 페이지를 함께 확인할 수 있어요.</p></section>
+  <div class="workspace">
+    <aside class="panel">
+      <h2>내 문서 <span id="count">0</span></h2>
+      <form id="upload-form"><label class="upload" for="file"><strong>＋ PDF 추가하기</strong><span>텍스트가 있는 PDF · 최대 20MB</span></label><input id="file" type="file" accept="application/pdf,.pdf" required><button id="upload-button" type="submit">업로드 및 저장</button></form>
+      <p id="upload-status" class="status" role="status" aria-live="polite"></p>
+      <div id="documents" class="documents"></div>
+    </aside>
+    <section class="panel results-panel">
+      <div class="section-head"><div><p class="eyebrow">문서 검색</p><h2 id="selected-title">문서를 선택해 주세요</h2></div></div>
+      <p class="muted" id="document-meta">왼쪽에서 PDF를 추가하면 시작할 수 있어요.</p>
+      <form id="search-form"><label class="sr-only" for="query">검색 키워드</label><div class="search-bar"><input id="query" placeholder="예: 배포, 프로젝트, 매출" maxlength="500" required disabled><button id="search-button" disabled>검색</button></div></form>
+      <div id="index-controls" hidden><button id="index-button" type="button">의미 검색 준비</button><p id="index-status" class="status" role="status" aria-live="polite"></p></div>
+      <form id="ask-form"><label for="question">문서에 질문하기</label><div class="search-bar"><input id="question" placeholder="예: 반복 업무를 줄인 사례를 설명해 주세요" maxlength="500" required disabled><button id="ask-button" disabled>질문</button></div></form>
+      <p id="retrieval-notice" class="notice">질문은 키워드 검색으로 근거를 찾습니다. AI 답변은 출처와 함께 확인하세요.</p>
+      <p id="answer-status" class="status" role="status" aria-live="polite"></p>
+      <div id="answer"></div>
+      <p id="search-status" class="status" role="status" aria-live="polite"></p>
+      <div id="results"><div class="empty"><span>⌕</span><h3>문서 속 필요한 내용을 찾아보세요</h3><p>검색 결과에서 페이지 번호를 누르면 PDF 원문이 열립니다.</p></div></div>
+    </section>
+  </div>
+</main>
+<footer>문서는 이 PC에 저장됩니다. AI를 활성화하면 검색된 원문과 질문이 로컬 Ollama로 전달됩니다.</footer>
+<script src="/app.js" defer></script>
+</body></html>

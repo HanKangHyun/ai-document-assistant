@@ -37,3 +37,6 @@ out/
 .vscode/
 
 uploads/
+.env
+data/
+.gradle-runtime/

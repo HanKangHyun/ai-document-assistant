@@ -1,0 +1,30 @@
+name: Java verification
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: aidocument
+          POSTGRES_USER: aiuser
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aiuser -d aidocument"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      PGVECTOR_TEST_URL: jdbc:postgresql://localhost:5432/aidocument
+      POSTGRES_USER: aiuser
+      POSTGRES_PASSWORD: ci-only-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: bash gradlew test bootJar --no-daemon
