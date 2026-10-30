@@ -38,6 +38,9 @@ class OllamaAnswerGeneratorTests {
         assertEquals(List.of(1), generate().citations());
         var sent = json.readTree(received.get());
         assertFalse(sent.path("stream").asBoolean());
+        assertEquals("object", sent.path("format").path("type").asText());
+        assertEquals(2, sent.path("format").path("required").size());
+        assertEquals(1, sent.path("format").path("properties").path("citations").path("items").path("maximum").asInt());
         assertTrue(sent.path("messages").get(1).path("content").asText().contains("매출 20% 증가"));
     }
     @Test void providerErrorsAreSanitized() {
@@ -48,7 +51,7 @@ class OllamaAnswerGeneratorTests {
     }
     @Test void malformedModelJsonFailsClosed() {
         respond(200, "{\"done\":true,\"message\":{\"content\":\"not json\"}}");
-        assertThrows(ResponseStatusException.class, this::generate);
+        assertEquals(502, assertThrows(ResponseStatusException.class, this::generate).getStatusCode().value());
     }
     @Test void rejectsRemoteEndpointsAndMissingModel() {
         assertThrows(IllegalArgumentException.class, () -> new OllamaAnswerGenerator(true, "https://example.com", "model", 1));
@@ -60,10 +63,22 @@ class OllamaAnswerGeneratorTests {
             exchange.close();
         });
         server.start();
-        assertEquals(503, assertThrows(ResponseStatusException.class, this::generate).getStatusCode().value());
+        assertEquals(504, assertThrows(ResponseStatusException.class, this::generate).getStatusCode().value());
     }
     @Test void truncatedGenerationIsRejected() {
         respond(200, "{\"done\":true,\"done_reason\":\"length\",\"message\":{\"content\":\"{}\"}}");
-        assertThrows(ResponseStatusException.class, this::generate);
+        var error = assertThrows(ResponseStatusException.class, this::generate);
+        assertEquals(502, error.getStatusCode().value());
+        assertTrue(error.getReason().contains("완료되지"));
+    }
+    @Test void validAbstentionRemainsEmptyInsteadOfAnError() {
+        respond(200, json.writeValueAsString(Map.of("done", true, "message", Map.of("content", "{\"answer\":\"\",\"citations\":[]}"))));
+        var result = generate();
+        assertEquals("", result.answer());
+        assertTrue(result.citations().isEmpty());
+    }
+    @Test void invalidFieldTypesAreFormatErrorsNotAbstention() {
+        respond(200, json.writeValueAsString(Map.of("done", true, "message", Map.of("content", "{\"answer\":null,\"citations\":[]}"))));
+        assertEquals(502, assertThrows(ResponseStatusException.class, this::generate).getStatusCode().value());
     }
 }
