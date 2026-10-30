@@ -99,7 +99,7 @@ H2와 PostgreSQL은 별도 DB입니다. H2에서 PostgreSQL로 전환할 때는 
 기본 테스트는 메모리 H2·임시 업로드 폴더·모의 AI 서버를 사용합니다. 실제 모델의 정확도 평가는 별도입니다.
 PostgreSQL 테스트는 `PGVECTOR_TEST_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`를 환경 변수로 설정하면 실행됩니다. 예: `PGVECTOR_TEST_URL=jdbc:postgresql://localhost:5432/aidocument`. `.env`는 Gradle이 자동으로 읽지 않습니다. PostgreSQL 테스트는 전용 임시 스키마를 생성·삭제하므로 개발용 DB에서 실행하세요.
 
-최근 확인: 관련 자동 테스트 **23개 통과**, 실행용 JAR 빌드 성공. 전체 테스트 최종 실행은 테스트 도구의 프로세스 연결 권한 문제로 미완료입니다. PostgreSQL 통합 테스트와 GitHub Actions 설정은 포함했으나 이 기록만으로 전체 테스트 또는 CI 성공을 주장하지 않습니다.
+검증 기록: 로컬에서 관련 자동 테스트 **23개 통과**와 실행용 JAR 빌드를 확인했습니다. 이후 커밋 `ee1ec93`의 **GitHub Actions `Java verification #1` 실행 성공**을 확인했습니다. 워크플로는 PostgreSQL·pgvector를 준비하고 `test bootJar`를 실행합니다. 개별 테스트 수·실행 시간은 CI 상세 보고서를 확인하기 전까지 별도로 기재하지 않습니다. 실제 모델 답변의 정확도 평가는 자동 빌드·테스트와 별개입니다.
 
 ## 주요 API
 
